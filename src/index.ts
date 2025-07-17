@@ -5,6 +5,7 @@ import pdfParse from 'pdf-parse';
 import ffmpeg from 'fluent-ffmpeg';
 import { Document, Packer, Paragraph } from 'docx';
 import { readFile, writeFile } from 'fs/promises';
+import { basename, join } from 'path';
 
 interface ConversionOptions {
   input: string;
@@ -43,11 +44,12 @@ export class FileConverter {
   async pdfToImage(options: ConversionOptions): Promise<void> {
     const { input, output, format = 'png' } = options;
     try {
+      const outputBaseName = basename(input, '.pdf');
       const convert = fromBuffer(await readFile(input), {
         density: 100,
         format,
-        outputDir: output,
-        outputName: 'page'
+        outPrefix: outputBaseName,
+        outputDir: output
       });
       await convert.bulk(-1);
       console.log(`Converted PDF ${input} to images in ${output}`);
