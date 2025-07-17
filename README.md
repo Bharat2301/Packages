@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Multi-Format Converter
 A Node.js package for converting image, PDF, and audio files, with SVG compression capabilities.
 Features
@@ -58,3 +59,6 @@ npm test
 
 License
 MIT License
+=======
+# Packages
+>>>>>>> f417f96535290e269420b018cd9bae42a0183889
