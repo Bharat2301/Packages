@@ -18,11 +18,21 @@ jest.mock('pdf2pic', () => ({
   }))
 }));
 jest.mock('pdf-parse', () => jest.fn(() => Promise.resolve({ text: 'mocked text' })));
-jest.mock('fluent-ffmpeg', () => jest.fn(() => ({
-  toFormat: jest.fn().mockReturnThis(),
-  on: jest.fn().mockReturnThis(),
-  save: jest.fn().mockImplementation((_, cb) => cb(null))
-}));
+jest.mock('fluent-ffmpeg', () => {
+  const mockFfmpeg = jest.fn(() => ({
+    toFormat: jest.fn().mockReturnThis(),
+    on: jest.fn().mockImplementation(function(this: { save: () => void }, event: string, callback: () => void) {
+      if (event === 'end') {
+        callback();
+      }
+      return this;
+    }),
+    save: jest.fn().mockImplementation(() => {
+      return Promise.resolve();
+    })
+  }));
+  return mockFfmpeg;
+});
 jest.mock('fs/promises', () => ({
   readFile: jest.fn().mockResolvedValue(Buffer.from('mocked content')),
   writeFile: jest.fn().mockResolvedValue(undefined)
@@ -33,6 +43,7 @@ describe('FileConverter', () => {
 
   beforeEach(() => {
     converter = new FileConverter();
+    jest.clearAllMocks();
   });
 
   test('convertImage should convert image to specified format', async () => {

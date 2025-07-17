@@ -45,9 +45,11 @@ export class FileConverter {
     try {
       const convert = fromBuffer(await readFile(input), {
         density: 100,
-        format
+        format,
+        outputDir: output,
+        outputName: 'page'
       });
-      await convert.bulk(-1, { outputDir: output });
+      await convert.bulk(-1);
       console.log(`Converted PDF ${input} to images in ${output}`);
     } catch (error: unknown) {
       throw new Error(`PDF to image conversion failed: ${error instanceof Error ? error.message : String(error)}`);
