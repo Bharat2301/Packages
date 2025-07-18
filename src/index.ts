@@ -7,14 +7,25 @@ import { readFile, writeFile } from 'fs/promises';
 import { basename, dirname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 
+// Import pdf-parse type
+import type { default as PdfParse } from 'pdf-parse';
+
 // Patch pdf-parse to handle ENOENT error
-let pdfParse;
+let pdfParse: typeof PdfParse;
 try {
   pdfParse = require('pdf-parse');
-} catch (err) {
-  console.warn('pdf-parse initialization failed:', err.message);
-  // Mock pdf-parse to prevent crashes
-  pdfParse = () => Promise.resolve({ text: '' });
+} catch (err: unknown) {
+  console.warn('pdf-parse initialization failed:', err instanceof Error ? err.message : String(err));
+  // Mock pdf-parse to prevent crashes, using double type assertion to match PdfParse
+  pdfParse = (() =>
+    Promise.resolve({
+      text: '',
+      numpages: 0,
+      numrender: 0,
+      info: {},
+      metadata: {},
+      version: 'mock', // Arbitrary string, unused in pdfToWord
+    })) as unknown as typeof PdfParse;
 }
 
 interface ConversionOptions {
