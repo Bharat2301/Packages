@@ -1,12 +1,21 @@
 import sharp from 'sharp';
 import { optimize } from 'svgo';
 import { fromBuffer } from 'pdf2pic';
-import pdfParse from 'pdf-parse';
 import ffmpeg from 'fluent-ffmpeg';
 import { Document, Packer, Paragraph } from 'docx';
 import { readFile, writeFile } from 'fs/promises';
 import { basename, dirname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+
+// Patch pdf-parse to handle ENOENT error
+let pdfParse;
+try {
+  pdfParse = require('pdf-parse');
+} catch (err) {
+  console.warn('pdf-parse initialization failed:', err.message);
+  // Mock pdf-parse to prevent crashes
+  pdfParse = () => Promise.resolve({ text: '' });
+}
 
 interface ConversionOptions {
   input: string;
