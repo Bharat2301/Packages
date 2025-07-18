@@ -50,5 +50,13 @@
     "type": "git",
     "url": "git+https://github.com/Bharat2301/Packages.git"
   },
-  "homepage": "https://github.com/Bharat2301/Packages.git#readme"
+  "homepage": "https://github.com/Bharat2301/Packages.git#readme",
+  "files": [
+    "dist/**/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=16"
+  }
 }
